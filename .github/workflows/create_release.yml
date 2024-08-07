@@ -18,7 +18,7 @@ on:
     outputs:
       new_id_release:
         description: "The last STG version"
-        value: ${{ inputs.my_env == 'PROD' && jobs.create_release.outputs.new_id_release || jobs.create_pre_release.outputs.new_id_release }}
+        value: ${{ jobs.create_release.outputs.new_id_release && jobs.create_release.outputs.new_id_release || jobs.create_pre_release.outputs.new_id_release }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

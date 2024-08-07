@@ -45,7 +45,7 @@ jobs:
             git push origin "${tag}"
             echo "TAG_RELEASE_CANDIDATE=$tag" >> $GITHUB_OUTPUT
         env:
-            GITHUB_TOKEN: ${{ secrets.GIT_SECRET}}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Last Tag
         uses: actions-ecosystem/action-get-latest-tag@v1
         id: get_latest_tag
@@ -71,7 +71,7 @@ jobs:
             Changelog:
             ${{ steps.changelog_prd.outputs.changelog }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GIT_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Notify on Changelog Failure
         if: failure() 
         run: echo "The Build Changelog step has failed:set_outputs "
@@ -98,7 +98,7 @@ jobs:
             git push origin "${tag}"
             echo "TAG_RELEASE_CANDIDATE=$tag" >> $GITHUB_OUTPUT
         env:
-            GITHUB_TOKEN: ${{ secrets.GIT_SECRET}}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Last Tag
         uses: actions-ecosystem/action-get-latest-tag@v1
         id: get_latest_tag
@@ -124,7 +124,7 @@ jobs:
             Changelog:
             ${{ steps.changelog_prd.outputs.changelog }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GIT_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Notify on Changelog Failure
         if: failure() 
         run: echo "The Build Changelog step has failed:set_outputs "

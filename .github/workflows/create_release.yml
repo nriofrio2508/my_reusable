@@ -16,7 +16,7 @@ on:
         required: true
         default: "PRD"
     outputs:
-      stg_last_version:
+      new_id_release:
         description: "The last STG version"
         value: ${{ jobs.create_pre_release.outputs.new_id_release }}
 

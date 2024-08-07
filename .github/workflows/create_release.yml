@@ -25,7 +25,7 @@ jobs:
   # This workflow contains a single job called "build"
   create_pre_release:
     runs-on: ubuntu-latest
-    if: ${{inputs.my_env}}== 'STG'
+    if: ${{inputs.my_env == 'STG' }}
     outputs:
       id_new_release: ${{ steps.create_release_step.outputs.id }}
       new_id_release: ${{ steps.create_release_step.outputs.id }}
@@ -78,7 +78,7 @@ jobs:
   
   create_release:
     runs-on: ubuntu-latest
-    if: ${{inputs.my_env}}== 'PRD'
+    if: ${{inputs.my_env == 'PRD' }}
     outputs:
       id_new_release: ${{ steps.create_release_step.outputs.id }}
       new_id_release: ${{ steps.create_release_step.outputs.id }}

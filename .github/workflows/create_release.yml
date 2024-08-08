@@ -81,7 +81,7 @@ jobs:
     if: ${{inputs.my_env == 'PRD' }}
     outputs:
       id_new_release: ${{ steps.create_release_step.outputs.id }}
-      new_id_release: ${{ steps.create_release_step.outputs.id }}
+      new_id_release: ${{ steps.new_step.outputs.id || steps.create_release_step.outputs.id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

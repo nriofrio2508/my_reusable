@@ -10,9 +10,9 @@ on:
         type: string
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-mi_saludo:
+jobs:
   # This workflow contains a single job called "build"
-  build:
+  mi_saludo:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 

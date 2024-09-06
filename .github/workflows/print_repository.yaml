@@ -13,7 +13,10 @@ on:
         required: false
         default: "QUE HAY"
       environment:
-        type: string        
+        type: string
+      pathToDeploy:
+        type: string
+        
 
 env:
   NOMBRE_ENV: 'MY_INPUT_${{ inputs.saludo }}'
@@ -27,8 +30,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+      - name: print Path
+        run: echo ${{ inputs.pathToDeploy }}
+      
       - name: Upper
         run: |
           UPPER_ENVIRONMENT_NAME=$(echo ${{ inputs.environment }} | tr '[:lower:]' '[:upper:]')

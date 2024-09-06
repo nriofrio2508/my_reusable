@@ -32,7 +32,7 @@ jobs:
       - name: Upper
         run: |
           UPPER_ENVIRONMENT_NAME=$(echo ${{ inputs.environment }} | tr '[:lower:]' '[:upper:]')
-          echo "AZURE_CREDENTIALS_ENV=$(echo AZURE_CREDENTIALS_${{ env.UPPER_ENVIRONMENT_NAME }})" >> $GITHUB_ENV
+          echo "AZURE_CREDENTIALS_ENV=$(echo AZURE_CREDENTIALS_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV
           echo "VPN_CA_CRT_ENV=$(echo VPN_CA_CRT_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV
           echo "VPN_USER_CRT_ENV=$(echo VPN_USER_CRT_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV
           echo "VPN_USER_KEY_ENV=$(echo VPN_USER_KEY_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV

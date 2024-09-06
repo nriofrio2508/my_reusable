@@ -31,7 +31,7 @@ jobs:
           if [ vars["REPO_VALOR_QA"] = '5' ]; then
             echo "valor es cinco"
           else
-            echo "que paso"
+            echo "que paso  ${{ vars['REPO_VALOR_QA'] }}"
           fi
       - name: Print Readme
         run: |

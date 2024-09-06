@@ -24,7 +24,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-
+      - name: if var
+        run: |
+          if [ vars["repo_valor_qa"] = 5]; then
+            echo "valor es cinco"
+          else
+            echo "que paso"
+          fi
       - name: Print Readme
         run: |
           cat README.md

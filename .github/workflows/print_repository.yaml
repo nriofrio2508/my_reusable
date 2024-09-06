@@ -26,6 +26,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: if var
         run: |
+          echo "valor de var ${{ vars["REPO_VALOR_QA"] }}"
+          echo "segundo var  ${{ vars.REPO_VALOR_QA }}"
           if [ vars["REPO_VALOR_QA"] = 5 ]; then
             echo "valor es cinco"
           else

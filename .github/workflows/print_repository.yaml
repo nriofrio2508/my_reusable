@@ -31,16 +31,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Upper
         run: |
-          echo "UPPER_ENVIRONMENT_NAME=$(echo ${{ inputs.environment }} | tr '[:lower:]' '[:upper:]')" >> $GITHUB_ENV
-          echo "${{ env.UPPER_ENVIRONMENT_NAME }}"
+          UPPER_ENVIRONMENT_NAME=$(echo ${{ inputs.environment }} | tr '[:lower:]' '[:upper:]')
           echo "AZURE_CREDENTIALS_ENV=$(echo AZURE_CREDENTIALS_${{ env.UPPER_ENVIRONMENT_NAME }})" >> $GITHUB_ENV
-          echo "VPN_CA_CRT_ENV=$(echo VPN_CA_CRT_${{ env.UPPER_ENVIRONMENT_NAME }})" >> $GITHUB_ENV
-          echo "VPN_USER_CRT_ENV=$(echo VPN_USER_CRT_${{ env.UPPER_ENVIRONMENT_NAME }})" >> $GITHUB_ENV
-          echo "VPN_USER_KEY_ENV=$(echo VPN_USER_KEY_${{ env.UPPER_ENVIRONMENT_NAME }})" >> $GITHUB_ENV
-          echo "VPN_SECRET_USERNAME_PASSWORD_ENV=$(echo VPN_SECRET_USERNAME_PASSWORD_${{ env.UPPER_ENVIRONMENT_NAME }})" >> $GITHUB_ENV
-          echo  "VPN_TLS_KEY_ENV=$(echo VPN_TLS_KEY_${{ env.UPPER_ENVIRONMENT_NAME }})" >> $GITHUB_ENV
-          echo  "VPN_HOST_IP_ENV=$(echo VPN_HOST_IP_${{ env.UPPER_ENVIRONMENT_NAME }})" >> $GITHUB_ENV
-          echo  "YAPE_VPN_RESOLVECTL_ENV=$(echo YAPE_VPN_RESOLVECTL_${{ env.UPPER_ENVIRONMENT_NAME }})" >> $GITHUB_ENV
+          echo "VPN_CA_CRT_ENV=$(echo VPN_CA_CRT_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV
+          echo "VPN_USER_CRT_ENV=$(echo VPN_USER_CRT_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV
+          echo "VPN_USER_KEY_ENV=$(echo VPN_USER_KEY_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV
+          echo "VPN_SECRET_USERNAME_PASSWORD_ENV=$(echo VPN_SECRET_USERNAME_PASSWORD_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV
+          echo  "VPN_TLS_KEY_ENV=$(echo VPN_TLS_KEY_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV
+          echo  "VPN_HOST_IP_ENV=$(echo VPN_HOST_IP_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV
+          echo  "YAPE_VPN_RESOLVECTL_ENV=$(echo YAPE_VPN_RESOLVECTL_$UPPER_ENVIRONMENT_NAME)" >> $GITHUB_ENV
       - name: print environments
         run: |
           echo "${{ env.UPPER_ENVIRONMENT_NAME }}"

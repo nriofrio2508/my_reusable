@@ -12,6 +12,8 @@ on:
         type: string
         required: false
         default: "QUE HAY"
+      environment:
+        type: string        
 
 env:
   NOMBRE_ENV: 'MY_INPUT_${{ inputs.saludo }}'
@@ -27,8 +29,10 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+      - name: Upper
+        run: echo "GLOBAL_ENVIRONMENT_NAME=$(echo ${{ inputs.environment }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
       - name: print env
-        run: echo '${{ env.NOMBRE_ENV}}'
+        run: echo '${{ env.GLOBAL_ENVIRONMENT_NAME}}'
       - name: if var
         run: |
           echo "valor de var ${{ vars['REPO_VALOR_QA'] }}"

@@ -14,7 +14,7 @@ on:
         default: "QUE HAY"
 
 env:
-  NOMBRE_ENV: 'MY_INPUT_$${{ inputs.saludo }}'
+  NOMBRE_ENV: 'MY_INPUT_${{ inputs.saludo }}'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

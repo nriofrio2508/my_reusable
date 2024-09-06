@@ -11,6 +11,7 @@ on:
       mensaje:
         type: string
         required: false
+        default: "QUE HAY"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -27,6 +28,8 @@ jobs:
       - name: Print Readme
         run: |
           cat README.md
+      - name: Print mensaje
+        run: echo "${{ inputs.mensaje }}"
 
       # Runs a single command using the runners shell
       - name: Get repository

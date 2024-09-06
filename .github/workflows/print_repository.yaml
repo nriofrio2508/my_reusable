@@ -17,7 +17,7 @@ on:
       pathToDeploy:
         type: string
       myVersion:
-      type: string
+        type: string
         
 
 env:

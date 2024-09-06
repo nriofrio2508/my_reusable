@@ -43,6 +43,7 @@ jobs:
           echo  "YAPE_VPN_RESOLVECTL_ENV=$(echo YAPE_VPN_RESOLVECTL_${{ env.UPPER_ENVIRONMENT_NAME }})" >> $GITHUB_ENV
       - name: print environments
         run: |
+          echo "${{ env.UPPER_ENVIRONMENT_NAME }}"
           echo ${{ env.AZURE_CREDENTIALS_ENV }}
           echo ${{ env.VPN_USER_CRT_ENV }}
           echo ${{ env.VPN_USER_CRT_ENV }}

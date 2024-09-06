@@ -16,6 +16,8 @@ on:
         type: string
       pathToDeploy:
         type: string
+      myVersion:
+      type: string
         
 
 env:
@@ -85,3 +87,5 @@ jobs:
       - name: Run a one-line script
         run: |          
           echo "Mi repository ${{ github.repository }}"
+      - name: Print version
+        run: echo ${{ inputs.myVersion }}

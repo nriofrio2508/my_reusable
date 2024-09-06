@@ -13,6 +13,9 @@ on:
         required: false
         default: "QUE HAY"
 
+env:
+  NOMBRE_ENV: 'MY_INPUT_$${{ inputs.saludo }}'
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -24,6 +27,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+      - name: print env
+        run: echo '${{ env.NOMBRE_ENV}}'
       - name: if var
         run: |
           echo "valor de var ${{ vars['REPO_VALOR_QA'] }}"

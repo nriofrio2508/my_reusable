@@ -11,7 +11,7 @@ jobs:
         with:
           repository: nriofrio2508/my_reusable
           path: './scripts_workflow'
-          token: ''
+          token: '4515'
           ref: main
       - name: saludo
         run: echo Saludando        

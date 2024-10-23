@@ -14,7 +14,11 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           ref: main
       - name: saludo
-        run: ls  
+        run: |
+          ls  
+          pwd
+          cd /scripts_workflow
+          ls
        
       - uses: ./scripts_workflow/.github/workflows/connect_vpn.yml
        

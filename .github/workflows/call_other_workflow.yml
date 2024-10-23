@@ -15,10 +15,11 @@ jobs:
           ref: main
       - name: saludo
         run: |
+          cp ./scripts_workflow/.github/workflows/connect_vpn.yml connect_vpn.yml
           ls  
           pwd
           cd ./scripts_workflow
           ls
        
-      - uses: ./scripts_workflow/.github/workflows/connect_vpn.yml
+      - uses: ./connect_vpn.yml
        

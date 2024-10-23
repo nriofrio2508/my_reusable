@@ -6,8 +6,9 @@ jobs:
   call_workflow:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: saludo
-        run: echo Saludando
+        run: echo Saludando        
 
       - uses: ./github/workflows/connect_vpn.yml
        

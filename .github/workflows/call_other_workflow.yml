@@ -17,7 +17,7 @@ jobs:
         run: |
           ls  
           pwd
-          cd /scripts_workflow
+          cd ./scripts_workflow
           ls
        
       - uses: ./scripts_workflow/.github/workflows/connect_vpn.yml

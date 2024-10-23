@@ -16,5 +16,5 @@ jobs:
       - name: saludo
         run: echo Saludando        
 
-      - uses: ./scripts_workflow/github/workflows/connect_vpn.yml
+      - uses: ./scripts_workflow/.github/workflows/connect_vpn.yml
        

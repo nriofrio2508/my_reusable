@@ -11,7 +11,7 @@ jobs:
         with:
           repository: nriofrio2508/my_reusable
           path: './scripts_workflow'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
           ref: main
       - name: saludo
         run: echo Saludando        

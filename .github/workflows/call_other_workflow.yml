@@ -13,9 +13,14 @@ jobs:
           path: './scripts_workflow'
           token: ${{ secrets.GH_PAT }}
           ref: main
+      - name: ls
+        run: ls
 
       - name: mi_repo
         uses: actions/checkout@v4
+
+      - name: ls
+        run: ls
       
       - name: saludo
         run: |

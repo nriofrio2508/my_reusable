@@ -1,3 +1,4 @@
+name: call vpn
 on:
   workflow_call:
 

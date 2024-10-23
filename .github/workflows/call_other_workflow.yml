@@ -6,9 +6,14 @@ jobs:
   call_workflow:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: ⬇️ Download Scripts
+        uses: actions/checkout@v4
+        with:
+          repository: nriofrio2508/my_reusable
+          path: './scripts_workflow'
+          ref: main
       - name: saludo
         run: echo Saludando        
 
-      - uses: ./github/workflows/connect_vpn.yml
+      - uses: ./scripts_workflow/github/workflows/connect_vpn.yml
        

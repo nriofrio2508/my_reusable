@@ -26,11 +26,9 @@ jobs:
       
       - name: saludo
         run: |
-          cp ./scripts_workflow/.github/workflows/connect_vpn.yml ./.github/workflows/connect_vpn.yml
+          cp ./scripts_workflow/.github/workflows/connect_vpn.yml ./principal_repo/.github/workflows/connect_vpn.yml
           ls  
           pwd
-          cd ./scripts_workflow
-          ls
        
-      - uses: ./.github/workflows/connect_vpn.yml
+      - uses: ./principal_repo/.github/workflows/connect_vpn.yml
        

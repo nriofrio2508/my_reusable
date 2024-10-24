@@ -35,6 +35,6 @@ jobs:
         run:  |
           ls
        
-      - uses: ./principal_repo/.github/workflows/connect_vpn.yml
+      - uses: ./.github/workflows/connect_vpn.yml
 
        

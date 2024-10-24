@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
 
 jobs:
+  only_job:
+    uses: ./.github/workflows/connect_vpn.yml
   call_workflow:
     runs-on: ubuntu-latest
     steps:

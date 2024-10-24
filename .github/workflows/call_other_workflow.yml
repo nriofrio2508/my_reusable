@@ -31,13 +31,10 @@ jobs:
           ls  
           pwd
       - name: other
+        working-directory: principal_repo
         run:  |
-          cd principal_repo
-          ls
-          cd .github
-          ls
-          cd workflows
           ls
        
       - uses: ./principal_repo/.github/workflows/connect_vpn.yml
+
        

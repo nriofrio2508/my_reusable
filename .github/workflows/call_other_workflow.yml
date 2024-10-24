@@ -23,12 +23,21 @@ jobs:
 
       - name: ls
         run: ls
+        
       
       - name: saludo
         run: |
           cp ./scripts_workflow/.github/workflows/connect_vpn.yml ./principal_repo/.github/workflows/connect_vpn.yml
           ls  
           pwd
+      - name: other
+        run:  |
+          cd principal_repo
+          ls
+          cd .github
+          ls
+          cd workflows
+          ls
        
       - uses: ./principal_repo/.github/workflows/connect_vpn.yml
        

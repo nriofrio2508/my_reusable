@@ -18,6 +18,8 @@ jobs:
 
       - name: mi_repo
         uses: actions/checkout@v4
+        with:
+          path: './principal_repo'
 
       - name: ls
         run: ls

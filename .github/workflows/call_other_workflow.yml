@@ -5,40 +5,5 @@ on:
 jobs:
   only_job:
     uses: ./.github/workflows/connect_vpn.yml
-  call_workflow:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/workflows/connect_vpn.yml
-      - name: ⬇️ Download Scripts
-        uses: actions/checkout@v4
-        with:
-          repository: nriofrio2508/my_reusable
-          path: './scripts_workflow'
-          token: ${{ secrets.GH_PAT }}
-          ref: main
-      - name: ls
-        run: ls
-
-      - name: mi_repo
-        uses: actions/checkout@v4
-        with:
-          path: './principal_repo'
-
-      - name: ls
-        run: ls
-        
-      
-      - name: saludo
-        run: |
-          cp ./scripts_workflow/.github/workflows/connect_vpn.yml ./principal_repo/.github/workflows/connect_vpn.yml
-          ls  
-          pwd
-      - name: other
-        working-directory: principal_repo
-        run:  |
-          ls
-       
-      - uses: ./.github/workflows/connect_vpn.yml
 
        

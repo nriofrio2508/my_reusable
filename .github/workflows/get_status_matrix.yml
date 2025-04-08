@@ -15,7 +15,7 @@ jobs:
   getMatrixStatus:
     runs-on: ubuntu-latest
     outputs:
-      paths_success: ${{ steps.get_matrix_status.outputs.matrix_status }}
+      matrix_status: ${{ steps.get_matrix_status.outputs.matrix_status }}
     steps:
       - name: Get matrix status
         id: get_matrix_status

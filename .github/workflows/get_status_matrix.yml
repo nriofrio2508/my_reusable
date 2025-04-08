@@ -1,0 +1,27 @@
+name: Generate pre release
+on:
+  workflow_call:
+    inputs:
+      status:
+        type: string
+        description: Matrix status
+      job_name:
+        type: string
+    outputs:
+      new_release_id:
+        description: "List of matrix status"
+        value: ${{ jobs.generatePreRelease.outputs.new_release_id || jobs.generateRelease.outputs.new_release_id }}
+jobs:
+  getMatrixStatus:
+    runs-on: ubuntu-latest
+    outputs:
+      paths_success: ${{ steps.get_matrix_status.outputs.matrix_status }}
+    steps:
+      - name: Get matrix status
+        id: get_matrix_status
+        run: |
+          jobs=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs)
+          matrix_status=$(echo "$jobs" | jq -r '.jobs | map(select(.conclusion == "${{ inputs.status}}" and (.name | tostring | startswith("${{ inputs.job_name}}")))) | map(.name) | join("|")')
+          echo "matrix_status=$matrix_status" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

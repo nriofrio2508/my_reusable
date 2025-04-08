@@ -8,9 +8,9 @@ on:
       job_name:
         type: string
     outputs:
-      new_release_id:
+      matrix_status:
         description: "List of matrix status"
-        value: ${{ jobs.generatePreRelease.outputs.new_release_id || jobs.generateRelease.outputs.new_release_id }}
+        value: ${{ jobs.generatePreRelease.outputs.matrix_status }}
 jobs:
   getMatrixStatus:
     runs-on: ubuntu-latest

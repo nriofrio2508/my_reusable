@@ -10,7 +10,7 @@ on:
 jobs:
   only_job:
     runs-on: ubuntu-latest
-    if: ${{ inputs.type == true }}
+    if: ${{ inputs.execute_matrix == true }}
     steps:
       - uses: actions/checkout@v4
         with:

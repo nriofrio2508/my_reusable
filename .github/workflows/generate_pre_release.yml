@@ -1,0 +1,7 @@
+name: Generate pre release
+on:
+  workflow_call:
+
+jobs:
+  only_job:
+    uses: ./.github/workflows/connect_vpn.yml

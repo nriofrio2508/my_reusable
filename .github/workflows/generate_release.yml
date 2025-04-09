@@ -11,6 +11,7 @@ on:
 jobs:
   generateRelease:
     runs-on: ubuntu-latest
+    if: ${{ inputs.execute_matrix == true }}
     steps:
       - uses: actions/checkout@v4
         with:

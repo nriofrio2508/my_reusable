@@ -22,6 +22,7 @@ jobs:
         run: |
           jobs=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs)
           matrix_status=$(echo "$jobs" | jq -r '.jobs | map(select(.conclusion == "${{ inputs.status}}" and (.name | tostring | startswith("${{ inputs.job_name}}")))) | map(.name) | join("|")')
+          echo $matrix_status
           echo "matrix_status=$matrix_status" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

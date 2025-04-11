@@ -20,7 +20,7 @@ jobs:
       - name: Get matrix status
         id: get_matrix_status
         run: |
-          $list_matrix_status=""
+          list_matrix_status=""
           page=1       
           num_jobs=1
 

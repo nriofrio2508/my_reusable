@@ -20,9 +20,20 @@ jobs:
       - name: Get matrix status
         id: get_matrix_status
         run: |
-          jobs=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs)
-          matrix_status=$(echo "$jobs" | jq -r '.jobs | map(select(.conclusion == "${{ inputs.status}}" and (.name | tostring | startswith("${{ inputs.job_name}}")))) | map(.name) | join("|")')
-          echo $matrix_status
-          echo "matrix_status=$matrix_status" >> $GITHUB_OUTPUT
+          $list_matrix_status=""
+          page=1       
+          num_jobs=1
+
+          while [ num_jobs -gt 0]; do
+            jobs=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs?per_page=100&page=$page)
+            num_jobs=$(echo "$jobs" | jq '.jobs | length')         
+            matrix_status=$(echo "$jobs" | jq -r '.jobs | map(select(.conclusion == "${{ inputs.status}}" and (.name | tostring | startswith("${{ inputs.job_name}}")))) | map(.name) | join("|")')
+            echo list_matrix_status="$list_matrix_status $matrix_status"
+            page=$((page + 1 ))
+            
+          done
+
+          echo $list_matrix_status
+          echo "matrix_status=$list_matrix_status" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

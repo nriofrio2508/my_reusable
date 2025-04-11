@@ -24,7 +24,7 @@ jobs:
           page=1       
           num_jobs=1
 
-          while [ num_jobs -gt 0]; do
+          while [ num_jobs -gt 0 ]; do
             jobs=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs?per_page=100&page=$page)
             num_jobs=$(echo "$jobs" | jq '.jobs | length')         
             matrix_status=$(echo "$jobs" | jq -r '.jobs | map(select(.conclusion == "${{ inputs.status}}" and (.name | tostring | startswith("${{ inputs.job_name}}")))) | map(.name) | join("|")')

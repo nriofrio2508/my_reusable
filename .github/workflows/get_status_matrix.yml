@@ -25,7 +25,8 @@ jobs:
           num_jobs=1
 
           while [ $num_jobs -gt 0 ]; do
-            jobs=(curl -s -H "Authorization: Bearer ${{  secrets.GITHUB_TOKEN  }}" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs?per_page=100&page=$page")
+            URL="https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id}}/attempts/${{ github.run_attempt }}/jobs?per_page=100&page=$page"
+            jobs=(curl -s -H "Authorization: Bearer ${{  secrets.GITHUB_TOKEN  }}" "$URL")
             
             num_jobs=$(echo "$jobs" | jq '.jobs | length')         
             matrix_status=$(echo "$jobs" | jq -r '.jobs | map(select(.conclusion == "${{ inputs.status}}" and (.name | tostring | startswith("${{ inputs.job_name}}")))) | map(.name) | join("|")')

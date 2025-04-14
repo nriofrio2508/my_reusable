@@ -8,9 +8,11 @@ on:
       job_name:
         type: string
       run_id:
-        required: false                
+        required: false 
+        type: string               
       run_attempt:
         required: false
+        type: string
 
     outputs:
       matrix_status:

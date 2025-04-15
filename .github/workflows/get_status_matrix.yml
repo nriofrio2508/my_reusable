@@ -42,6 +42,7 @@ jobs:
           done
 
           echo $list_matrix_status
+          list_matrix_status=$(echo "$list_matrix_status" | sed 's/^[ \t]*//;s/[ \t]*$//')
           echo "matrix_status=$list_matrix_status" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

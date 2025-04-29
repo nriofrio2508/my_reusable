@@ -1,4 +1,4 @@
-name: Generate pre release
+name: Get matrix status
 on:
   workflow_call:
     inputs:

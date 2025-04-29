@@ -4,8 +4,8 @@ name: Get Candidate release
 on:
   workflow_call:
     inputs:
-      version_name: #Example: customNamev.1.0.0 -> sen customName
-        description: 'Bundle path: domain/subdomain/destination'
+      version_name: #Example: customNamev.1.0.0 -> send customName
+        description: 'Version name, Example: domain-subdomain-destination'
         required: true
         type: string
       version_type:
@@ -101,6 +101,7 @@ jobs:
 
           new_rc_version="${{steps.get_next_release_version.outputs.new_release_version}}-rc.$rc"
           echo "new_rc_version=$new_rc_version" >> $GITHUB_OUTPUT
+          
       - name: Generate JSON
         run: |
           echo '{"last_tag_repo": "${{steps.get_previous_tag.outputs.tag}}" , "next_tag_repo": "${{ steps.generate_candidate_release.outputs.new_rc_version }}", "last_stable_release": "${{ steps.get_last_release.outputs.name }}" }'> "${{ inputs.version_name }}.json"

@@ -26,6 +26,7 @@ jobs:
         run: |
           last_tag_repo=$(jq -r '.last_tag_repo' ${{ inputs.matrix_dominio }}.json)
           next_tag_repo=$(jq -r '.next_tag_repo' ${{ inputs.matrix_dominio }}.json)
+          cat ${{ inputs.matrix_dominio }}.json
           last_stable_release=$(jq -r '.last_stable_release' ${{ inputs.matrix_dominio }}.json)
           echo "last_tag_repo=$last_tag_repo" >> $GITHUB_OUTPUT
           echo "next_tag_repo=$next_tag_repo" >> $GITHUB_OUTPUT

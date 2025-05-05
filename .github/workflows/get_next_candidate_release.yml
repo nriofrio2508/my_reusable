@@ -4,7 +4,7 @@ name: Get Candidate release
 on:
   workflow_call:
     inputs:
-      version_name: #Example: customNamev.1.0.0 -> send customName
+      version_name: #Example: If the structure of your version is customName-v.1.0.0 -> send customName
         description: 'Version name, Example: domain-subdomain-destination'
         required: true
         type: string
@@ -17,6 +17,11 @@ on:
         required: false
         type: boolean
         default: false
+      retention_days:
+        description: 'Retention days for artifact'
+        required: false
+        type: string
+        default: "1"
 
     outputs:
       last_tag:
@@ -39,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       - name: 'Get Previous tag'
         id: get_previous_tag
@@ -50,13 +55,21 @@ jobs:
 
       - name: Print previous tag
         run: echo "Previous tag -  ${{ steps.get_previous_tag.outputs.tag }}"
+      
+      - name: ⬇️ Download Scripts
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: nriofrio2508/my_reusable #CAMBIAR
+          token: ${{ secrets.GH_PAT }}
+          path: './scripts_workflow'
+          ref: main
 
       - name: Get last stable release by TAG
         id: get_last_release
         working-directory: ./.github/scripts
         run: |
-          chmod +x get_last_release_by_tag.sh
-          ./get_last_release_by_tag.sh ${{github.repository}} ${{ inputs.version_name }}
+          chmod +x ./scripts_workflow/.github/scripts/get_last_release_by_tag.sh
+          ./scripts_workflow/.github/scripts/get_last_release_by_tag.sh ${{github.repository}} ${{ inputs.version_name }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -103,6 +116,7 @@ jobs:
           echo "new_rc_version=$new_rc_version" >> $GITHUB_OUTPUT
           
       - name: Generate JSON
+        if: ${{ inputs.is_matrix == true}}
         run: |
           echo '{"last_tag_repo": "${{steps.get_previous_tag.outputs.tag}}" , "next_tag_repo": "${{ steps.generate_candidate_release.outputs.new_rc_version }}", "last_stable_release": "${{ steps.get_last_release.outputs.name }}" }'> "${{ inputs.version_name }}.json"
       
@@ -112,5 +126,5 @@ jobs:
         with:
           name: ${{ inputs.version_name }}
           path: "${{ inputs.version_name }}.json"
-          retention-days: 1
+          retention-days: ${{ inputs.retention_days }}
    

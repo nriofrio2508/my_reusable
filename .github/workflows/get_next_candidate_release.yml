@@ -117,7 +117,7 @@ jobs:
       - name: Generate JSON
         if: ${{ inputs.is_matrix == true}}
         run: |
-          echo '{"last_tag_repo": "${{steps.get_previous_tag.outputs.tag}}" , "next_tag_repo": "${{ steps.generate_candidate_release.outputs.new_rc_version }}", "last_stable_release": "${{ steps.get_last_release.outputs.name }}" }'> "${{ inputs.version_name }}.json"
+          echo '{"last_tag_repo": "${{steps.get_previous_tag.outputs.tag}}" , "next_candidate_release": "${{ steps.generate_candidate_release.outputs.new_rc_version }}", "last_stable_release": "${{ steps.get_last_release.outputs.name }}" }'> "${{ inputs.version_name }}.json"
       
       - name: Upload pre release
         if: ${{ inputs.is_matrix == true}}

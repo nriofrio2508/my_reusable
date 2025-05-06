@@ -113,11 +113,12 @@ jobs:
 
           new_rc_version="${{steps.get_next_release_version.outputs.new_release_version}}-rc.$rc"
           echo "new_rc_version=$new_rc_version" >> $GITHUB_OUTPUT
+          echo "next_release=${{steps.get_next_release_version.outputs.new_release_version}}" >> $GITHUB_OUTPUT
           
       - name: Generate JSON
         if: ${{ inputs.is_matrix == true}}
         run: |
-          echo '{"last_tag_repo": "${{steps.get_previous_tag.outputs.tag}}" , "next_candidate_release": "${{ steps.generate_candidate_release.outputs.new_rc_version }}", "last_stable_release": "${{ steps.get_last_release.outputs.name }}" }'> "${{ inputs.version_name }}.json"
+          echo '{"last_tag_repo": "${{steps.get_previous_tag.outputs.tag}}" , "next_candidate_release": "${{ steps.generate_candidate_release.outputs.new_rc_version }}", "last_stable_release": "${{ steps.get_last_release.outputs.name }}", "next_release": "${{ steps.generate_candidate_release.outputs.next_release }}" }'> "${{ inputs.version_name }}.json"
       
       - name: Upload pre release
         if: ${{ inputs.is_matrix == true}}

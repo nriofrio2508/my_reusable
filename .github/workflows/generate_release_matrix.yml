@@ -13,9 +13,9 @@ on:
         required: false
         type: string
         default: ''
-      matrix_dominio:
+      matrix_dominio_artifact:
         type: string
-        description: matrix_dominio
+        description: Name of artifact
       execute:
         type: boolean
       is_release:
@@ -38,16 +38,16 @@ jobs:
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
         with:
-          name: ${{ inputs.matrix_dominio }}
+          name: ${{ inputs.matrix_dominio_artifact }}
       
       - name: Outputs 
         id: outputs_matrix
         if: ${{ inputs.is_matrix == true }}
         run: |
-          last_tag_repo=$(jq -r '.last_tag_repo' ${{ inputs.matrix_dominio }}.json)
-          next_tag_repo=$(jq -r '.next_candidate_release' ${{ inputs.matrix_dominio }}.json)
-          last_stable_release=$(jq -r '.last_stable_release' ${{ inputs.matrix_dominio }}.json)
-          next_release=$(jq -r '.next_release' ${{ inputs.matrix_dominio }}.json)
+          last_tag_repo=$(jq -r '.last_tag_repo' ${{ inputs.matrix_dominio_artifact }}.json)
+          next_tag_repo=$(jq -r '.next_candidate_release' ${{ inputs.matrix_dominio_artifact }}.json)
+          last_stable_release=$(jq -r '.last_stable_release' ${{ inputs.matrix_dominio_artifact }}.json)
+          next_release=$(jq -r '.next_release' ${{ inputs.matrix_dominio_artifact }}.json)
           echo "last_tag_repo=$last_tag_repo" >> $GITHUB_OUTPUT
           echo "next_tag_repo=$next_tag_repo" >> $GITHUB_OUTPUT
           echo "last_stable_release=$last_stable_release" >> $GITHUB_OUTPUT

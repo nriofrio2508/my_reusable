@@ -61,7 +61,7 @@ jobs:
       - name: Get name new Release
         id: get_name_new_release
         run: |
-          new_release=$(echo ${{ inputs.release_version || steps.outputs_matrix.outputs.next_tag_repo }} | awk -F '-rc.' '{print $1}' )
+          new_release=$(echo ${{ inputs.release_version || steps.outputs_matrix.outputs.next_tag_repo }})
           change_log_path=$(echo ${{ inputs.changelog_path || steps.outputs_matrix.outputs.domain}}/${{steps.outputs_matrix.outputs.subdomain}}/${{steps.outputs_matrix.outputs.destination }} | awk -F '-rc.' '{print $1}' )
           echo "new_release_name=$new_release" >> $GITHUB_OUTPUT
           echo "change_log_path=$change_log_path" >> $GITHUB_OUTPUT

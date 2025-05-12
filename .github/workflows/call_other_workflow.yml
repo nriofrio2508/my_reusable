@@ -1,6 +1,6 @@
 name: call vpn
 on:
-  workflow_call:
+  workflow_dispatch:
 
 jobs:
   only_job:

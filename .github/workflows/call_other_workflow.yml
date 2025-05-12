@@ -5,5 +5,7 @@ on:
 jobs:
   only_job:
     uses: ./.github/workflows/connect_vpn.yml
-
+    with:
+      mi_variable: >
+        ALL_VARIABLES
        

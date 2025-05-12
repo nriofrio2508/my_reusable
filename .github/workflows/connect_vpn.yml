@@ -2,6 +2,11 @@ name: Connect VPN
 
 on:
   workflow_call:
+    inputs:
+      mi_variable:
+        type: string
+        required: true
+        description: "Variable to be passed to the job"
 
 jobs:
   build:
@@ -12,4 +17,4 @@ jobs:
 
       - name: Run a multi-line script
         run: |
-          echo "Conectando ando"
+          echo "Conectando ${{ inputs.mi_variable }}"

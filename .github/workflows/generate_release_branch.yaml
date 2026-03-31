@@ -1,0 +1,80 @@
+name: Generate release branch
+
+on:
+  workflow_call:
+    inputs:
+      branch_name:
+        description: 'Prefix branch name'
+        type: string
+
+jobs:
+  validate_branch:
+    outputs:
+      next_rc_version: ${{ steps.validate_exists_branch.outputs.new_rc_version_validate || inputs.branch_name }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0
+      - name: validate if branch exists
+        id: validate_exists_branch
+        run: |
+          exists_branch=$(git branch -r | grep "release/${{ inputs.branch_name }}" || true)
+          if [ -n "$exists_branch" ]; then
+            latest_branch=$(git for-each-ref --sort=-refname --format='%(refname:short)' refs/remotes/ | grep "^origin/release/${{ inputs.branch_name }}-rc." | head -n 1 || true)
+            last_rc=$(echo "$latest_branch" | awk -F'-rc.' '{print $2}')
+            ((last_rc++))
+            echo "new_rc_version_validate=${{ inputs.branch_name }}-rc.$last_rc" >> $GITHUB_OUTPUT
+          fi
+      - name: Result Validate Branch
+        run: |
+          echo "Output ${{ steps.validate_exists_branch.outputs.new_rc_version_validate }}"
+
+
+  create_branch:
+    needs: validate_branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create branch with GitHub API
+        id: create_branch
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          BRANCH_NAME: release/${{ needs.validate_branch.outputs.next_rc_version }}
+        run: |
+          set -euo pipefail
+
+          owner_repo="${{ github.repository }}"
+
+          # If branch already exists, keep previous behavior.
+          if gh api "/repos/${owner_repo}/git/ref/heads/${BRANCH_NAME}" >/dev/null 2>&1; then
+            echo "created=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          default_branch=$(gh api "/repos/${owner_repo}" --jq .default_branch)
+          base_sha=$(gh api "/repos/${owner_repo}/git/ref/heads/${default_branch}" --jq .object.sha)
+
+          gh api "/repos/${owner_repo}/git/refs" \
+            --method POST \
+            -f ref="refs/heads/${BRANCH_NAME}" \
+            -f sha="${base_sha}"
+
+          echo "created=true" >> "$GITHUB_OUTPUT"
+      - name: Validate Branch
+        if: ${{ steps.create_branch.outputs.created == 'false' }}
+        run: |
+          echo "The branch already exists: release/${{ needs.validate_branch.outputs.next_rc_version}}"
+          exit 1
+      - name: Get Branch Name
+        if: ${{ steps.create_branch.outputs.created == 'true' }}
+        run: |
+          branch_name="release/${{ needs.validate_branch.outputs.next_rc_version }}"
+
+          echo "Branch generated: ${branch_name}"
+
+          {
+            echo "## Release branch created"
+            echo ""
+            echo "- Branch: ${branch_name}"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -22,10 +22,12 @@ jobs:
         run: |
           exists_branch=$(git branch -r | grep "release/${{ inputs.branch_name }}" || true)
           if [ -n "$exists_branch" ]; then
-            latest_branch=$(git for-each-ref --sort=-refname --format='%(refname:short)' refs/remotes/ | grep "^origin/release/${{ inputs.branch_name }}" | head -n 1 || true)
+            branch_value="${{ inputs.branch_name }}"
+            clean_rc="${branch_value%-rc*}"
+            latest_branch=$(git for-each-ref --sort=-refname --format='%(refname:short)' refs/remotes/ | grep "^origin/release/${clean_rc}" | head -n 1 || true)
             last_rc=$(echo "$latest_branch" | awk -F'-rc.' '{print $2}')
             ((last_rc++))
-            echo "new_rc_version_validate=${{ inputs.branch_name }}-rc.$last_rc" >> $GITHUB_OUTPUT
+            echo "new_rc_version_validate=${clean_rc}-rc.$last_rc" >> $GITHUB_OUTPUT
           fi
       - name: Result Validate Branch
         run: |

@@ -20,13 +20,9 @@ jobs:
       - name: validate if branch exists
         id: validate_exists_branch
         run: |
-          set -Eeuo pipefail
-          PS4='+ line ${LINENO}: '
-          trap 'rc=$?; echo "::error::Fallo en linea ${LINENO}: ${BASH_COMMAND} (exit ${rc})"; exit ${rc}' ERR
-          set -x
           exists_branch=$(git branch -r | grep "release/${{ inputs.branch_name }}" || true)
           if [ -n "$exists_branch" ]; then
-            latest_branch=$(git for-each-ref --sort=-refname --format='%(refname:short)' refs/remotes/ | grep "^origin/release/${{ inputs.branch_name }}-rc." | head -n 1 || true)
+            latest_branch=$(git for-each-ref --sort=-refname --format='%(refname:short)' refs/remotes/ | grep "^origin/release/${{ inputs.branch_name }}" | head -n 1 || true)
             last_rc=$(echo "$latest_branch" | awk -F'-rc.' '{print $2}')
             ((last_rc++))
             echo "new_rc_version_validate=${{ inputs.branch_name }}-rc.$last_rc" >> $GITHUB_OUTPUT

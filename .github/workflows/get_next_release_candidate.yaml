@@ -61,7 +61,7 @@ jobs:
       - name: ⬇️ Download Scripts # In this case we need downloading the scripts_workflow before checkout service because if download after checkout the scripts_workflow will be override by the checkout service
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
-          repository: nriofrio2508/my_reusable
+          repository: yaperos/reusable-workflows
           token: ${{ secrets.GH_PAT }}
           path: './scripts_workflow'
           ref: main
@@ -83,21 +83,31 @@ jobs:
             version_number=$(echo ${{ steps.get_last_release.outputs.name}} | awk -F'-v' '{print $2}')          
           fi
           echo "semver_release=$version_number" >> $GITHUB_OUTPUT
-      
-      - name: 'Get all next version'
-        id: semvers
-        uses: "WyriHaximus/github-action-next-semvers@d079934efaf011a4cf8912d4637097fe35d32b93"
-        with:
-          version: ${{ steps.semver_release_step.outputs.semver_release }}
 
       - name: Get next release version
         id: get_next_release_version
+        shell: bash
         run: |
-          case "${{inputs.version_type}}" in
-              major) echo "new_release_version=${{ inputs.prefix_repo }}-v${{steps.semvers.outputs.major }}"  >> $GITHUB_OUTPUT ;; 
-              minor) echo "new_release_version=${{ inputs.prefix_repo }}-v${{steps.semvers.outputs.minor }}"  >> $GITHUB_OUTPUT ;;
-              patch) echo "new_release_version=${{ inputs.prefix_repo }}-v${{steps.semvers.outputs.patch }}"  >> $GITHUB_OUTPUT ;; 
-              *) echo "Parameter is not major, minor, or patch" ;;
+          set -euo pipefail
+
+          version="${{ steps.semver_release_step.outputs.semver_release }}"
+
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid semver_release: $version"
+            exit 1
+          fi
+
+          IFS='.' read -r major minor patch <<< "$version"
+
+          v_major="$((major + 1)).0.0"
+          v_minor="${major}.$((minor + 1)).0"
+          v_patch="${major}.${minor}.$((patch + 1))"
+
+          case "${{ inputs.version_type }}" in
+            major) echo "new_release_version=${{ inputs.prefix_repo }}-v${v_major}" >> "$GITHUB_OUTPUT" ;;
+            minor) echo "new_release_version=${{ inputs.prefix_repo }}-v${v_minor}" >> "$GITHUB_OUTPUT" ;;
+            patch) echo "new_release_version=${{ inputs.prefix_repo }}-v${v_patch}" >> "$GITHUB_OUTPUT" ;;
+            *) echo "Parameter is not major, minor, or patch"; exit 1 ;;
           esac
       #Analyze whether the latest RC is equal to the new version being generated.
       - name: Diff between next release and last tag semver

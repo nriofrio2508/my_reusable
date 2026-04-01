@@ -61,7 +61,7 @@ jobs:
       - name: ⬇️ Download Scripts # In this case we need downloading the scripts_workflow before checkout service because if download after checkout the scripts_workflow will be override by the checkout service
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
-          repository: yaperos/reusable-workflows
+          repository: nriofrio2508/my_reusable
           token: ${{ secrets.GH_PAT }}
           path: './scripts_workflow'
           ref: main

@@ -1,0 +1,154 @@
+name: Get next release candidate
+
+on:
+  workflow_call:
+    inputs:
+      prefix_repo:
+        type: string
+        required: true
+      version_type:
+        description: 'Version Type'
+        required: true
+        type: string
+      delete_old_rc:
+        description: 'Delete rc different from the new version'
+        type: boolean
+        required: false
+        default: true
+      type_of_tag:
+        description: 'Type of tag to create'
+        type: string
+        required: false
+        default: 'branch'
+    outputs:
+      last_tag_repo:
+        description: latest repository tag
+        value: ${{ jobs.get_last_tag.outputs.last_tag_repo }}
+      next_rc:
+        description: Next release candidate
+        value: ${{ jobs.get_last_tag.outputs.next_tag_repo }}
+      last_stable_release:
+        description: Last stable release from monorepo
+        value: ${{ jobs.get_last_tag.outputs.last_stable_release }}
+      new_release_name:
+        description: Next release from monorepo
+        value: ${{ jobs.get_last_tag.outputs.new_release_name }}
+      
+
+jobs:
+  get_last_tag:
+    runs-on: ubuntu-latest
+    outputs:
+      last_tag_repo: ${{steps.previoustag.outputs.tag}}
+      next_tag_repo: ${{ steps.generate_tag_rc.outputs.new_rc_version }}
+      last_stable_release: ${{ steps.get_last_release.outputs.name || '' }}
+      new_release_name: ${{ steps.get_new_release_name.outputs.new_release_name }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
+      
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@61819f33034117e6c686e6a31dba995a85afc9de" #v2
+        with:
+          pattern: '${{ inputs.prefix_repo }}-v*'
+          fallback: '${{ inputs.prefix_repo }}-v0.0.0' # Optional fallback tag to use when no tag can be found
+
+      - name: Get last tag Step
+        run: echo "Get last tag ${{ steps.previoustag.outputs.tag }}"
+
+      - name: ⬇️ Download Scripts # In this case we need downloading the scripts_workflow before checkout service because if download after checkout the scripts_workflow will be override by the checkout service
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          repository: nriofrio2508/my_reusable
+          token: ${{ secrets.GH_PAT }}
+          path: './scripts_workflow'
+          ref: main
+      
+      - name: Get last stable release by TAG
+        id: get_last_release
+        run: |
+          chmod +x ./scripts_workflow/.github/scripts/get_last_release_by_tag.sh
+          ./scripts_workflow/.github/scripts/get_last_release_by_tag.sh ${{github.repository}} ${{ inputs.prefix_repo }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Get SemVer from release
+        id: semver_release_step        
+        run: |
+          version_number="0.0.0"
+          echo "Last Release ${{ steps.get_last_release.outputs.name }}"  
+          if [ ${{ steps.get_last_release.outputs.name }} ]; then
+            version_number=$(echo ${{ steps.get_last_release.outputs.name}} | awk -F'-v' '{print $2}')          
+          fi
+          echo "semver_release=$version_number" >> $GITHUB_OUTPUT
+      
+      - name: 'Get all next version'
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@d079934efaf011a4cf8912d4637097fe35d32b93"
+        with:
+          version: ${{ steps.semver_release_step.outputs.semver_release }}
+
+      - name: Get next release version
+        id: get_next_release_version
+        run: |
+          case "${{inputs.version_type}}" in
+              major) echo "new_release_version=${{ inputs.prefix_repo }}-v${{steps.semvers.outputs.major }}"  >> $GITHUB_OUTPUT ;; 
+              minor) echo "new_release_version=${{ inputs.prefix_repo }}-v${{steps.semvers.outputs.minor }}"  >> $GITHUB_OUTPUT ;;
+              patch) echo "new_release_version=${{ inputs.prefix_repo }}-v${{steps.semvers.outputs.patch }}"  >> $GITHUB_OUTPUT ;; 
+              *) echo "Parameter is not major, minor, or patch" ;;
+          esac
+      #Analyze whether the latest RC is equal to the new version being generated.
+      - name: Diff between next release and last tag semver
+        id: generate_tag_rc
+        run: |
+          last_tag_semver=$(echo "${{ steps.previoustag.outputs.tag}}" | awk -F'-rc.' '{print $1}')
+          rc=1
+          if [ "$last_tag_semver" = "${{steps.get_next_release_version.outputs.new_release_version}}" ]; then
+            rc=$(echo ${{ steps.previoustag.outputs.tag }} | awk -F'-rc.' '{print $2}')
+            ((rc++))
+          else            
+            echo "delete_trash_rc=Y" >> $GITHUB_OUTPUT
+            echo "rc_to_delete=$last_tag_semver" >> $GITHUB_OUTPUT
+          fi
+
+          new_rc_version="${{steps.get_next_release_version.outputs.new_release_version}}-rc.$rc"
+          echo "new_rc_version=$new_rc_version" >> $GITHUB_OUTPUT
+
+      - name: Get new release name
+        id: get_new_release_name
+        run: |
+          new_release=$(echo ${{ steps.generate_tag_rc.outputs.new_rc_version }} | awk -F '-rc.' '{print $1}' )
+          echo "new_release_name=$new_release" >> $GITHUB_OUTPUT
+      #If the latest RC is different from the one being generated, delete it. For example:
+      # latest RC v5.0.5-rc.3 and next release to generate is v5.1.0-rc.1 then delete RCs belonging to 5.0.5      
+      - name: Delete trash RC
+        if: steps.generate_tag_rc.outputs.delete_trash_rc == 'Y' && inputs.delete_old_rc == true
+        run: |
+          echo "RC a eliminar ${{ steps.generate_tag_rc.outputs.rc_to_delete }}-rc.*"
+          gh release list | grep "^${{ steps.generate_tag_rc.outputs.rc_to_delete }}-rc." | awk '{print $1}'
+          for tag in $(gh release list | grep "^${{ steps.generate_tag_rc.outputs.rc_to_delete }}-rc." | awk '{print $1}'); do
+            gh release delete --yes --cleanup-tag $tag 
+          done          
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Push new Tag
+        if: ${{inputs.type_of_tag == 'release'}}
+        run: |
+          tag=${{ steps.generate_tag_rc.outputs.new_rc_version }}
+          message='${{ steps.get_new_release_name.outputs.new_release_name }}'
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git tag -a "${tag}" -m "${message}"
+          git push origin "${tag}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Print output values
+        run: |
+          echo " last_tag_repo : ${{ steps.previoustag.outputs.tag }} "
+          echo " next_tag_repo: ${{ steps.generate_tag_rc.outputs.new_rc_version }} "
+          echo " last_stable_release: ${{ steps.get_last_release.outputs.name }} "
+          echo " new_release_name: ${{ steps.get_new_release_name.outputs.new_release_name }} "
